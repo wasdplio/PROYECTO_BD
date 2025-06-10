@@ -242,6 +242,7 @@ if (isset($_GET['computadora_id'])) {
         }
      #reparaciones-section {
         display: none;
+        margin-top:20px;
     }
     .progress {
     width: 100% !important; /* Fuerza el ancho al 100% */
@@ -264,7 +265,7 @@ if (isset($_GET['computadora_id'])) {
     <aside class="sidebar">
         <div class="sidebar-header">
             <i class="fas fa-laptop-code"></i>
-            <span>PeopleHub</span>
+            <span>SIEC</span>
         </div>
 
         <div class="sidebar-menu">
@@ -295,7 +296,7 @@ if (isset($_GET['computadora_id'])) {
             
             <div class="logo">
                 <i class="fas fa-laptop-code"></i>
-                <span>PeopleHub</span>
+                <span>SIEC</span>
             </div>
             
             <div class="search-bar">
@@ -2515,44 +2516,58 @@ function resetearModalIncidencia() {
     });
 }
  function setupReparacionesFunctions() {
-        // Mostrar modal para nueva reparación
-        document.getElementById('btnAgregarReparacion').addEventListener('click', function() {
-            resetearModalReparacion();
-            document.getElementById('modalReparacion').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        });
+       // Mostrar modal para nueva reparación
+    document.getElementById('btnAgregarReparacion').addEventListener('click', function() {
+        resetearModalReparacion();
+        document.getElementById('modalReparacion').classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Establecer fecha actual en el campo de fecha de reporte
+        const today = new Date();
+        const formattedDate = formatDateForInput(today);
+        document.getElementById('fecha_reparacion').value = formattedDate;
+    });
 
-        // Cerrar modal
-        document.getElementById('closeModalReparacion').addEventListener('click', function() {
-            document.getElementById('modalReparacion').classList.remove('show');
+    // Cerrar modal
+    document.getElementById('closeModalReparacion').addEventListener('click', function() {
+        document.getElementById('modalReparacion').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    });
+
+    document.getElementById('cancelarFormReparacion').addEventListener('click', function() {
+        document.getElementById('modalReparacion').classList.remove('show');
+        document.body.style.overflow = 'auto';
+    });
+
+    document.getElementById('modalReparacion').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('show');
             document.body.style.overflow = 'auto';
-        });
-
-        document.getElementById('cancelarFormReparacion').addEventListener('click', function() {
-            document.getElementById('modalReparacion').classList.remove('show');
-            document.body.style.overflow = 'auto';
-        });
-
-        document.getElementById('modalReparacion').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('show');
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        // Resetear modal
-        function resetearModalReparacion() {
-            document.getElementById('modalReparacionTitulo').textContent = 'Agregar Reparación';
-            document.getElementById('btnSubmitReparacion').textContent = 'Guardar Reparación';
-            document.getElementById('formReparacion').action = 'guardar_reparacion.php';
-            document.getElementById('formReparacion').reset();
-            document.getElementById('reparacion_id').value = '';
-            document.getElementById('formReparacion').classList.remove('was-validated');
-            
-            // Establecer fecha actual por defecto
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('fecha_reparacion').value = today;
         }
+    });
+
+    // Función para formatear la fecha como YYYY-MM-DD (formato input date)
+    function formatDateForInput(date) {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    // Resetear modal
+    function resetearModalReparacion() {
+        document.getElementById('modalReparacionTitulo').textContent = 'Agregar Reparación';
+        document.getElementById('btnSubmitReparacion').textContent = 'Guardar Reparación';
+        document.getElementById('formReparacion').action = 'guardar_reparacion.php';
+        document.getElementById('formReparacion').reset();
+        document.getElementById('reparacion_id').value = '';
+        document.getElementById('formReparacion').classList.remove('was-validated');
+    }
 
         // Ver detalles de reparación
        window.verReparacion = function(id) {
@@ -2744,6 +2759,7 @@ function resetearModalIncidencia() {
             this.classList.add('active');
         });
     });
+    
 
     // Inicialización cuando el DOM está listo
     document.addEventListener('DOMContentLoaded', function() {
